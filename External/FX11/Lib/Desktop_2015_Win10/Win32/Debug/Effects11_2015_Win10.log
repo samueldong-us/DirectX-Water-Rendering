@@ -1,0 +1,8 @@
+﻿  d3dxGlobal.cpp
+  EffectAPI.cpp
+  EffectLoad.cpp
+  EffectNonRuntime.cpp
+  EffectReflection.cpp
+  EffectRuntime.cpp
+  Generating Code...
+  Effects11_2015_Win10.vcxproj -> C:\Users\Samuel\Documents\Libraries\FX11-master\Bin\Desktop_2015_Win10\Win32\Debug\Effects11d.lib
