@@ -144,11 +144,14 @@ copy "$(TargetPath)" "$(SolutionDir)..\Lib"</Command>
   <ItemGroup>
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameClock.cpp" />
+    <ClCompile Include="GameException.cpp" />
     <ClCompile Include="GameTime.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Common.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameClock.h" />
+    <ClInclude Include="GameException.h" />
     <ClInclude Include="GameTime.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

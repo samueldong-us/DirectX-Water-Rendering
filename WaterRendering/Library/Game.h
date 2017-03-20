@@ -1,8 +1,6 @@
 #pragma once
 
-#include <Windows.h>
-#include <string>
-
+#include "Common.h"
 #include "GameClock.h"
 #include "GameTime.h"
 
@@ -21,6 +19,12 @@ namespace Library
 		const std::wstring& WindowTitle() const;
 		int ScreenWidth() const;
 		int ScreenHeight() const;
+		ID3D11Device1* Direct3DDevice() const;
+		ID3D11DeviceContext1* Direct3DDeviceContext() const;
+		bool DepthBufferEnabled() const;
+		bool IsFullScreen() const;
+		const D3D11_TEXTURE2D_DESC& BackBufferDescription() const;
+		const D3D11_VIEWPORT& Viewport() const;
 
 		virtual void Run();
 		virtual void Exit();
@@ -30,10 +34,12 @@ namespace Library
 		
 	protected:
 		virtual void InitializeWindow();
+		virtual void InitializeDirectX();
 		virtual void Shutdown();
 
 		static const UINT DefaultScreenWidth;
 		static const UINT DefaultScreenHeight;
+		static const UINT DefaultFrameRate;
 
 		HINSTANCE instance;
 		std::wstring windowClass;
@@ -42,6 +48,21 @@ namespace Library
 
 		HWND windowHandle;
 		WNDCLASSEX window;
+
+		D3D_FEATURE_LEVEL featureLevel;
+		ID3D11Device1* direct3DDevice;
+		ID3D11DeviceContext1* direct3DDeviceContext;
+		IDXGISwapChain1* swapChain;
+		
+		UINT frameRate;
+		bool isFullScreen;
+		bool depthStencilBufferEnabled;
+		
+		ID3D11Texture2D* depthStencilBuffer;
+		D3D11_TEXTURE2D_DESC backBufferDescription;
+		ID3D11RenderTargetView* renderTargetView;
+		ID3D11DepthStencilView* depthStencilView;
+		D3D11_VIEWPORT viewport;
 
 		UINT screenWidth;
 		UINT screenHeight;

@@ -1,7 +1,8 @@
 #include <Windows.h>
 #include <memory>
 
-#include "Game.h"
+#include "RenderingGame.h"
+#include "GameException.h"
 
 #if defined(DEBUG) || defined(_DEBUG)
 #define _CRTDBG_MAP_ALLOC
@@ -11,6 +12,7 @@
 
 using namespace std;
 using namespace Library;
+using namespace Rendering;
 
 int WINAPI wWinMain(HINSTANCE instance, HINSTANCE previousInstance, PWSTR commandLine, int showCommand)
 {
@@ -18,9 +20,16 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE previousInstance, PWSTR comman
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-	unique_ptr<Game> game(new Game(instance, L"RenderingClass", L"Water Rendering", showCommand));
+	unique_ptr<RenderingGame> game(new RenderingGame(instance, L"RenderingClass", L"Water Rendering", showCommand));
 
-	game->Run();
+	try
+	{
+		game->Run();
+	}
+	catch (GameException e)
+	{
+		MessageBox(game->WindowHandle(), e.WhatW().c_str(), game->WindowTitle().c_str(), MB_ABORTRETRYIGNORE);
+	}
 
 	return 0;
 }
