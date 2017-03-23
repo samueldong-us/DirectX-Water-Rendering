@@ -3,9 +3,12 @@
 #include "Common.h"
 #include "GameClock.h"
 #include "GameTime.h"
+#include "GameComponent.h"
 
 namespace Library
 {
+	class GameComponent;
+
 	class Game
 	{
 	public:
@@ -19,12 +22,15 @@ namespace Library
 		const std::wstring& WindowTitle() const;
 		int ScreenWidth() const;
 		int ScreenHeight() const;
+
 		ID3D11Device1* Direct3DDevice() const;
 		ID3D11DeviceContext1* Direct3DDeviceContext() const;
 		bool DepthBufferEnabled() const;
 		bool IsFullScreen() const;
 		const D3D11_TEXTURE2D_DESC& BackBufferDescription() const;
 		const D3D11_VIEWPORT& Viewport() const;
+
+		const std::vector<GameComponent*>& Components() const;
 
 		virtual void Run();
 		virtual void Exit();
@@ -69,6 +75,7 @@ namespace Library
 
 		GameClock gameClock;
 		GameTime gameTime;
+		std::vector<GameComponent*> components;
 
 	private:
 		POINT CenterWindow(int windowWidth, int windowHeight);

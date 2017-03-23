@@ -20,6 +20,8 @@ namespace Rendering
 
 	void RenderingGame::Initialize()
 	{
+		fpsComponent = new FpsComponent(*this);
+		components.push_back(fpsComponent);
 		Game::Initialize();
 	}
 
@@ -40,5 +42,11 @@ namespace Rendering
 		{
 			throw GameException("IDXGISwapChain::Present() failed.", result);
 		}
+	}
+
+	void RenderingGame::Shutdown()
+	{
+		DeleteObject(fpsComponent);
+		Game::Shutdown();
 	}
 }

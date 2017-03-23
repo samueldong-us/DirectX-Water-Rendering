@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "GameException.h"
+#include "DrawableGameComponent.h"
 
 using namespace std;
 
@@ -83,6 +84,11 @@ namespace Library
 		return viewport;
 	}
 
+	const std::vector<GameComponent*>& Game::Components() const
+	{
+		return components;
+	}
+
 	void Game::Run()
 	{
 		InitializeWindow();
@@ -117,11 +123,36 @@ namespace Library
 		PostQuitMessage(0);
 	}
 
-	void Game::Initialize() {}
+	void Game::Initialize()
+	{
+		for (GameComponent* component : components)
+		{
+			component->Initialize();
+		}
+	}
 
-	void Game::Update(const GameTime & gameTime) {}
+	void Game::Update(const GameTime& gameTime)
+	{
+		for (GameComponent* component : components)
+		{
+			if (component->Enabled())
+			{
+				component->Update(gameTime);
+			}
+		}
+	}
 
-	void Game::Draw(const GameTime & gameTime) {}
+	void Game::Draw(const GameTime& gameTime) 
+	{
+		for (GameComponent* component : components)
+		{
+			DrawableGameComponent* drawableComponent = component->As<DrawableGameComponent>();
+			if (drawableComponent != nullptr && drawableComponent->Visible())
+			{
+				drawableComponent->Draw(gameTime);
+			}
+		}
+	}
 
 	void Game::InitializeWindow()
 	{

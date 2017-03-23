@@ -2,6 +2,7 @@
 
 #include "Common.h"
 #include "Game.h"
+#include "FpsComponent.h"
 
 using namespace Library;
 
@@ -19,5 +20,9 @@ namespace Rendering
 
 	private:
 		static const XMVECTORF32 BackgroundColor;
+
+		FpsComponent* fpsComponent;
+
+		virtual void Shutdown() override;
 	};
 }
