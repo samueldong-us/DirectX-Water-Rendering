@@ -44,6 +44,11 @@ namespace Library
 		return windowTitle;
 	}
 
+	float Game::AspectRatio() const
+	{
+		return (float)screenHeight / (float)screenWidth;
+	}
+
 	int Game::ScreenWidth() const
 	{
 		return screenWidth;
@@ -87,6 +92,11 @@ namespace Library
 	const std::vector<GameComponent*>& Game::Components() const
 	{
 		return components;
+	}
+
+	const ServiceContainer & Game::Services() const
+	{
+		return serviceContainer;
 	}
 
 	void Game::Run()

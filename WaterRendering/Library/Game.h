@@ -4,6 +4,7 @@
 #include "GameClock.h"
 #include "GameTime.h"
 #include "GameComponent.h"
+#include "ServiceContainer.h"
 
 namespace Library
 {
@@ -20,6 +21,7 @@ namespace Library
 		const WNDCLASSEX& Window() const;
 		const std::wstring& WindowClass() const;
 		const std::wstring& WindowTitle() const;
+		float AspectRatio() const;
 		int ScreenWidth() const;
 		int ScreenHeight() const;
 
@@ -31,6 +33,7 @@ namespace Library
 		const D3D11_VIEWPORT& Viewport() const;
 
 		const std::vector<GameComponent*>& Components() const;
+		const ServiceContainer& Services() const;
 
 		virtual void Run();
 		virtual void Exit();
@@ -76,6 +79,8 @@ namespace Library
 		GameClock gameClock;
 		GameTime gameTime;
 		std::vector<GameComponent*> components;
+
+		ServiceContainer serviceContainer;
 
 	private:
 		POINT CenterWindow(int windowWidth, int windowHeight);
