@@ -2,6 +2,7 @@
 
 #include "Common.h"
 #include "Game.h"
+#include "GameException.h"
 
 namespace Library
 {

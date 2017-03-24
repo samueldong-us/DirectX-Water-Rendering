@@ -20,13 +20,32 @@ namespace Rendering
 
 	void RenderingGame::Initialize()
 	{
+		if (FAILED(DirectInput8Create(instance, DIRECTINPUT_VERSION, IID_IDirectInput8, (LPVOID*)&directInput, nullptr)))
+		{
+			throw GameException("DirectInput8Create() failed.");
+		}
+		keyboard = new KeyboardComponent(*this, directInput);
+		components.push_back(keyboard);
+		serviceContainer.AddService(keyboard);
+
+		mouse = new MouseComponent(*this, directInput);
+		components.push_back(mouse);
+		serviceContainer.AddService(mouse);
+
 		fpsComponent = new FpsComponent(*this);
 		components.push_back(fpsComponent);
+
 		Game::Initialize();
 	}
 
 	void RenderingGame::Update(const GameTime& gameTime)
 	{
+		if (keyboard->WasKeyPressedThisFrame(DIK_ESCAPE))
+		{
+			Exit();
+		}
+		KeyboardComponent* test = serviceContainer.GetService<KeyboardComponent>();
+
 		Game::Update(gameTime);
 	}
 
@@ -46,6 +65,8 @@ namespace Rendering
 
 	void RenderingGame::Shutdown()
 	{
+		ReleaseObject(directInput);
+
 		DeleteObject(fpsComponent);
 		Game::Shutdown();
 	}
