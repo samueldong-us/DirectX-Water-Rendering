@@ -9,6 +9,8 @@
 #include <memory>
 
 #include <d3d11_1.h>
+#include <d3dx11effect.h>
+#include <d3dcompiler.h>
 #include <DirectXMath.h>
 #include <DirectXPackedVector.h>
 

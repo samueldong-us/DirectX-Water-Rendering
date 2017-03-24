@@ -6,7 +6,7 @@ namespace Library
 
 	const float FirstPersonCamera::DefaultRotationRate = XMConvertToRadians(1.0f);
 	const float FirstPersonCamera::DefaultMovementRate = 10.0f;
-	const float FirstPersonCamera::DefaultMouseSensitivity = 100.0f;
+	const float FirstPersonCamera::DefaultMouseSensitivity = 25.0f;
 
 	FirstPersonCamera::FirstPersonCamera(Game& game) :
 		Camera(game), mouseSensitivity(DefaultMouseSensitivity), rotationRate(DefaultRotationRate), movementRate(DefaultMovementRate),

@@ -5,7 +5,9 @@
 #include "Game.h"
 #include "KeyboardComponent.h"
 #include "MouseComponent.h"
+#include "FirstPersonCamera.h"
 #include "FpsComponent.h"
+#include "TriangleTest.h"
 
 using namespace Library;
 
@@ -27,8 +29,13 @@ namespace Rendering
 		LPDIRECTINPUT8 directInput;
 		KeyboardComponent* keyboard;
 		MouseComponent* mouse;
+		FirstPersonCamera* firstPersonCamera;
 
 		FpsComponent* fpsComponent;
+		TriangleTest* triangleTest;
+
+		SpriteBatch* spriteBatch;
+		SpriteFont* spriteFont;
 
 		virtual void Shutdown() override;
 	};

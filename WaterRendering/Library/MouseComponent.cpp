@@ -107,7 +107,7 @@ namespace Library
 
 	bool MouseComponent::WasButtonDown(MouseButton button) const
 	{
-		return (lastState.rgbButtons[button] & 0x80) == 0;
+		return (lastState.rgbButtons[button] & 0x80) != 0;
 	}
 
 	bool MouseComponent::WasButtonPressedThisFrame(MouseButton button) const

@@ -46,7 +46,7 @@ namespace Library
 
 	float Game::AspectRatio() const
 	{
-		return (float)screenHeight / (float)screenWidth;
+		return (float)screenWidth / (float)screenHeight;
 	}
 
 	int Game::ScreenWidth() const

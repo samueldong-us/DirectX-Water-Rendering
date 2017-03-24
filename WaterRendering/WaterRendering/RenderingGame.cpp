@@ -1,4 +1,7 @@
+#include <sstream>
+
 #include "GameException.h"
+#include "Utility.h"
 
 #include "RenderingGame.h"
 
@@ -16,6 +19,10 @@ namespace Rendering
 
 	RenderingGame::~RenderingGame()
 	{
+		for (GameComponent* component : components)
+		{
+			delete component;
+		}
 	}
 
 	void RenderingGame::Initialize()
@@ -32,8 +39,18 @@ namespace Rendering
 		components.push_back(mouse);
 		serviceContainer.AddService(mouse);
 
+		firstPersonCamera = new FirstPersonCamera(*this);
+		components.push_back(firstPersonCamera);
+
 		fpsComponent = new FpsComponent(*this);
 		components.push_back(fpsComponent);
+
+		triangleTest = new TriangleTest(*this, *firstPersonCamera);
+		components.push_back(triangleTest);
+
+		SetCurrentDirectory(Utility::ExecutableDirectory().c_str());
+		spriteBatch = new SpriteBatch(direct3DDeviceContext);
+		spriteFont = new SpriteFont(direct3DDevice, L"Content\\Fonts\\SourceSansPro_14_Regular.spritefont");
 
 		Game::Initialize();
 	}
@@ -54,6 +71,11 @@ namespace Rendering
 		direct3DDeviceContext->ClearRenderTargetView(renderTargetView, reinterpret_cast<const float*>(&BackgroundColor));
 		direct3DDeviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
+		wostringstream mouseInfo;
+		mouseInfo << "X: " << (mouse->IsButtonDown(MouseLeftButton) ? "Down" : "Up") << "    Y: " << firstPersonCamera->Direction().y << "    Z: " << firstPersonCamera->Direction().z;
+		spriteBatch->Begin();
+		spriteFont->DrawString(spriteBatch, mouseInfo.str().c_str(), XMFLOAT2(0.0f, 30.0f));
+		spriteBatch->End();
 		Game::Draw(gameTime);
 
 		HRESULT result;
@@ -66,8 +88,8 @@ namespace Rendering
 	void RenderingGame::Shutdown()
 	{
 		ReleaseObject(directInput);
-
-		DeleteObject(fpsComponent);
+		DeleteObject(spriteBatch);
+		DeleteObject(spriteFont);
 		Game::Shutdown();
 	}
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <fstream>
 #include <Shlwapi.h>
 
 #include "Common.h"
@@ -60,6 +61,26 @@ namespace Library
 		{
 			GetDirectory(inputPath, directory);
 			GetFileName(inputPath, filename);
+		}
+
+		static void LoadBinaryFile(const std::wstring& filename, std::vector<char>& data)
+		{
+			std::ifstream file(filename.c_str(), std::ios::binary);
+			if (file.bad())
+			{
+				throw std::exception("Could not open file.");
+			}
+
+			file.seekg(0, std::ios::end);
+			UINT size = (UINT)file.tellg();
+
+			if (size > 0)
+			{
+				data.resize(size);
+				file.seekg(0, std::ios::beg);
+				file.read(&data.front(), size);
+			}
+			file.close();
 		}
 	};
 }
