@@ -181,6 +181,7 @@ IF EXIST "$(TargetDir)Content" xcopy /E /Y "$(TargetDir)Content" "$(SolutionDir)
     <ClCompile Include="KeyboardComponent.cpp" />
     <ClCompile Include="MouseComponent.cpp" />
     <ClCompile Include="Pass.cpp" />
+    <ClCompile Include="RenderStateHelper.cpp" />
     <ClCompile Include="Technique.cpp" />
     <ClCompile Include="Variable.cpp" />
   </ItemGroup>
@@ -199,6 +200,7 @@ IF EXIST "$(TargetDir)Content" xcopy /E /Y "$(TargetDir)Content" "$(SolutionDir)
     <ClInclude Include="KeyboardComponent.h" />
     <ClInclude Include="MouseComponent.h" />
     <ClInclude Include="Pass.h" />
+    <ClInclude Include="RenderStateHelper.h" />
     <ClInclude Include="RTTI.h" />
     <ClInclude Include="ServiceContainer.h" />
     <ClInclude Include="Technique.h" />

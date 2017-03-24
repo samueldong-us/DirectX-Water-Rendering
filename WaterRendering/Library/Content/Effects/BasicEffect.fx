@@ -1,6 +1,6 @@
 cbuffer ConstantBufferPerObject
 {
-	float4x4 WorldViewProjection : WORLDVIEWPROJECTION;
+	float4x4 WorldViewProjection;
 }
 
 struct VertexInput
@@ -38,7 +38,6 @@ technique11 main11
 	pass p0
 	{
 		SetVertexShader(CompileShader(vs_5_0, VertexShaderMain()));
-		SetGeometryShader(NULL);
 		SetPixelShader(CompileShader(ps_5_0, PixelShaderMain()));
 		SetRasterizerState(DisableCulling);
 	}

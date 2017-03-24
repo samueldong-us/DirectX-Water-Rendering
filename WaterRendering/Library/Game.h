@@ -5,10 +5,12 @@
 #include "GameTime.h"
 #include "GameComponent.h"
 #include "ServiceContainer.h"
+#include "RenderStateHelper.h"
 
 namespace Library
 {
 	class GameComponent;
+	class RenderStateHelper;
 
 	class Game
 	{
@@ -81,6 +83,7 @@ namespace Library
 		std::vector<GameComponent*> components;
 
 		ServiceContainer serviceContainer;
+		RenderStateHelper* stateHelper;
 
 	private:
 		POINT CenterWindow(int windowWidth, int windowHeight);

@@ -135,6 +135,7 @@ namespace Library
 
 	void Game::Initialize()
 	{
+		stateHelper = new RenderStateHelper(*this);
 		for (GameComponent* component : components)
 		{
 			component->Initialize();
@@ -159,7 +160,10 @@ namespace Library
 			DrawableGameComponent* drawableComponent = component->As<DrawableGameComponent>();
 			if (drawableComponent != nullptr && drawableComponent->Visible())
 			{
+				stateHelper->SaveAll();
 				drawableComponent->Draw(gameTime);
+				stateHelper->RestoreAll();
+				stateHelper->ResetShaders();
 			}
 		}
 	}
@@ -328,6 +332,8 @@ namespace Library
 
 		ReleaseObject(direct3DDeviceContext);
 		ReleaseObject(direct3DDevice);
+
+		DeleteObject(stateHelper);
 
 		UnregisterClass(windowClass.c_str(), window.hInstance);
 	}

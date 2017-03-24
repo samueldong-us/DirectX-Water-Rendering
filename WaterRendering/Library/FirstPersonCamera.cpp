@@ -68,7 +68,7 @@ namespace Library
 		XMVECTOR rotationVector = XMLoadFloat2(&rotationAmount) * rotationRate * deltaTime;
 		XMVECTOR right = XMLoadFloat3(&this->right);
 		XMMATRIX pitchMatrix = XMMatrixRotationAxis(right, XMVectorGetY(rotationVector));
-		XMMATRIX yawMatrix = XMMatrixRotationY(XMVectorGetX(rotationVector));
+		XMMATRIX yawMatrix = XMMatrixRotationZ(XMVectorGetX(rotationVector));
 		ApplyRotation(XMMatrixMultiply(pitchMatrix, yawMatrix));
 
 		XMVECTOR position = XMLoadFloat3(&this->position);

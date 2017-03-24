@@ -8,6 +8,7 @@
 #include "FirstPersonCamera.h"
 #include "FpsComponent.h"
 #include "TriangleTest.h"
+#include "Water.h"
 
 using namespace Library;
 
@@ -32,7 +33,7 @@ namespace Rendering
 		FirstPersonCamera* firstPersonCamera;
 
 		FpsComponent* fpsComponent;
-		TriangleTest* triangleTest;
+		Water* water;
 
 		SpriteBatch* spriteBatch;
 		SpriteFont* spriteFont;
