@@ -1,3 +1,5 @@
+#include <random>
+
 #include "Utility.h"
 #include "Water.h"
 
@@ -7,11 +9,16 @@ namespace Rendering
 {
 	RTTI_DEFINITIONS(Water)
 
-	const int Water::Levels = 10;
+	const int Water::Levels = 8;
 	const int Water::Resolution = 32;
-	const float Water::MaximumDistance = 1024.0f;
+	const float Water::MaximumDistance = 2048.0f;
 
-	Water::Water(Game& game, Camera& camera) : DrawableGameComponent(game, camera) {}
+	const int Water::WaveLevels = 8;
+	const int Water::NumberOfWavesPerLevel = 4;
+	const float Water::MaximumWaveLength = 1024.0f;
+	const XMFLOAT2 Water::WindDirection = XMFLOAT2(1.0f, 1.0f);
+
+	Water::Water(Game& game, Camera& camera) : DrawableGameComponent(game, camera), roughness(), wireframe(false) {}
 
 	Water::~Water()
 	{
@@ -29,7 +36,7 @@ namespace Rendering
 
 		Technique* technique = effect->TechniquesByName().find("main11")->second;
 		Pass* pass = technique->PassesByName().find("WireFrame")->second;
-		D3D11_INPUT_ELEMENT_DESC inputElementDescription[] = 
+		D3D11_INPUT_ELEMENT_DESC inputElementDescription[] =
 		{
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
@@ -46,6 +53,15 @@ namespace Rendering
 		{
 			throw GameException("ID3D11Device::CreateBuffer() failed.");
 		}
+
+		if (FAILED(CreateDDSTextureFromFile(game->Direct3DDevice(), L"Content\\Textures\\TropicalCubeMap.dds", nullptr, &environmentMap)))
+		{
+			throw GameException("CreateDDSTextureFromFile() failed.");
+		}
+
+		keyboard = game->Services().GetService<KeyboardComponent>();
+
+		GenerateWaves();
 	}
 
 	void Water::Update(const GameTime& gameTime)
@@ -63,11 +79,25 @@ namespace Rendering
 		context->Map(vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedVertex);
 		memcpy(mappedVertex.pData, &output[0], sizeof(WaterVertex) * outputSize);
 		context->Unmap(vertexBuffer, 0);
+
+		if (keyboard->IsKeyDown(DIK_EQUALS))
+		{
+			roughness += 0.5f * gameTime.ElapsedGameTime();
+		}
+		if (keyboard->IsKeyDown(DIK_MINUS))
+		{
+			roughness -= 0.5f * gameTime.ElapsedGameTime();
+		}
+		roughness = fminf(fmaxf(roughness, 0.0f), 1.0f);
+
+		if (keyboard->WasKeyPressedThisFrame(DIK_SPACE))
+		{
+			wireframe = !wireframe;
+		}
 	}
 
 	void Water::Draw(const GameTime& gameTime)
 	{
-		
 		ID3D11DeviceContext* context = game->Direct3DDeviceContext();
 		context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
 		context->IASetInputLayout(inputLayout);
@@ -75,15 +105,62 @@ namespace Rendering
 		UINT offset = 0;
 		context->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
 		Technique* technique = effect->TechniquesByName().find("main11")->second;
-		Pass* pass = technique->PassesByName().find("WireFrame")->second;
+		Pass* pass = technique->PassesByName().find(wireframe ? "WireFrame" : "Normal")->second;
 		Variable* worldViewProjection = effect->VariablesByName().find("WorldViewProjection")->second;
 		*worldViewProjection << camera->ViewProjectionMatrix();
 		Variable* resolution = effect->VariablesByName().find("Resolution")->second;
 		*resolution << Resolution;
 		Variable* cameraPosition = effect->VariablesByName().find("CameraPosition")->second;
 		*cameraPosition << camera->PositionVector();
+		Variable* time = effect->VariablesByName().find("Time")->second;
+		*time << (float)gameTime.TotalGameTime();
+		Variable* steepness = effect->VariablesByName().find("Steepness")->second;
+		*steepness << roughness;
+		vector<GerstnerWave> dynamicWaves;
+		for (GerstnerWave wave : waves)
+		{
+			dynamicWaves.emplace_back(wave.Direction, wave.Frequency, (roughness * 0.2 + 0.001) * wave.Amplitude, wave.PhaseSpeed);
+		}
+		Variable* waveParameter = effect->VariablesByName().find("WaveParameter")->second;
+		(*waveParameter)(&dynamicWaves[0], sizeof(GerstnerWave) * dynamicWaves.size());
+		Variable* environmentTexture = effect->VariablesByName().find("EnvironmentMap")->second;
+		*environmentTexture << environmentMap;
 		pass->Apply(0, context);
 		context->Draw(outputSize, 0);
+	}
+
+#define G 9.8f
+	void Water::GenerateWaves()
+	{
+		default_random_engine generator;
+		normal_distribution<float> normal;
+		float wavelength = MaximumWaveLength;
+		float amplitude = 1.0f;
+		float angleRange = XM_PIDIV4 / powf(2.0f, WaveLevels);
+		XMVECTOR windDirection = XMVector3Normalize(XMLoadFloat2(&WindDirection));
+		XMVECTOR up = XMLoadFloat3(&XMFLOAT3(0.0f, 0.0f, 1.0f));
+		XMVECTOR orthogonal = XMVector3Cross(windDirection, up);
+		for (int level = 0; level < WaveLevels; level++)
+		{
+			for (int wave = 0; wave < NumberOfWavesPerLevel; wave++)
+			{
+				float currentWavelength = wavelength + normal(generator) * wavelength * 0.5f;
+				GerstnerWave currentWave(
+					XMFLOAT2(),
+					sqrtf(G * XM_2PI / currentWavelength),
+					amplitude + normal(generator) * amplitude,
+					0.0f
+				);
+				currentWave.PhaseSpeed = currentWave.Frequency;
+				float angle = (angleRange + XM_PIDIV4) * normal(generator);
+				XMVECTOR direction = cosf(angle) * windDirection + sinf(angle) * orthogonal;
+				XMStoreFloat2(&currentWave.Direction, direction);
+				waves.push_back(currentWave);
+			}
+			wavelength /= 2.0f;
+			amplitude /= 1.5f;
+			angleRange *= 2.0f;
+		}
 	}
 
 	bool Water::SelectNodes(Node node, float range, int level, vector<WaterVertex>& output)

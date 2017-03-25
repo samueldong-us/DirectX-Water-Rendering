@@ -22,6 +22,7 @@ namespace Library
 		Variable& operator<<(ID3D11ShaderResourceView* value);
 		Variable& operator<<(FXMVECTOR value);
 		Variable& operator<<(float value);
+		Variable& operator()(void* data, UINT size, UINT offset = 0);
 
 	private:
 		Effect& effect;

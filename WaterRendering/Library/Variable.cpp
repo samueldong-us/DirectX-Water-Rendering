@@ -85,4 +85,10 @@ namespace Library
 		variable->SetFloat(value);
 		return *this;
 	}
+
+	Variable& Variable::operator()(void* data, UINT size, UINT offset)
+	{
+		variable->SetRawValue(data, offset, size);
+		return *this;
+	}
 }

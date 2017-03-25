@@ -42,17 +42,19 @@ namespace Rendering
 		firstPersonCamera = new FirstPersonCamera(*this);
 		components.push_back(firstPersonCamera);
 
-		fpsComponent = new FpsComponent(*this);
-		components.push_back(fpsComponent);
-
 		water = new Water(*this, *firstPersonCamera);
 		components.push_back(water);
+
+		fpsComponent = new FpsComponent(*this);
+		components.push_back(fpsComponent);
 
 		SetCurrentDirectory(Utility::ExecutableDirectory().c_str());
 		spriteBatch = new SpriteBatch(direct3DDeviceContext);
 		spriteFont = new SpriteFont(direct3DDevice, L"Content\\Fonts\\SourceSansPro_14_Regular.spritefont");
 
 		Game::Initialize();
+
+		firstPersonCamera->SetPosition(0.0f, 0.0f, 5.0f);
 	}
 
 	void RenderingGame::Update(const GameTime& gameTime)
