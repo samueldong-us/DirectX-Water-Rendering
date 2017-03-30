@@ -201,7 +201,7 @@ float4 PixelMain(GeometryOutput input) : SV_Target
 	float dotProduct = dot(input.Normal, viewDirection);
 	float reflectionAmount = R0 + (1.0f - R0) * pow(1.0f - dotProduct, 5.0f);
 	float3 reflectionDirection = (-viewDirection) + 2.0f * dotProduct * input.Normal;
-	float3 transformedReflectionDirection = float3(reflectionDirection.x, reflectionDirection.z, -reflectionDirection.y);
+	float3 transformedReflectionDirection = float3(reflectionDirection.x, reflectionDirection.z, reflectionDirection.y);
 	float3 environment = EnvironmentMap.Sample(AnisotropicSampler, transformedReflectionDirection).rgb;
 	float3 color = lerp(WaterColor, environment, reflectionAmount);
 	return float4(color, 1.0f);
