@@ -42,9 +42,6 @@ namespace Rendering
 		firstPersonCamera = new FirstPersonCamera(*this);
 		components.push_back(firstPersonCamera);
 
-		water = new Water(*this, *firstPersonCamera);
-		components.push_back(water);
-
 		fpsComponent = new FpsComponent(*this);
 		components.push_back(fpsComponent);
 
